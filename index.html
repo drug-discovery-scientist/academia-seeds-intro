@@ -157,6 +157,11 @@ j.seen{border-bottom-color:#e2d6f5; color:inherit; font-weight:inherit}
 .nextup a{display:block; text-align:center; text-decoration:none; background:linear-gradient(135deg,var(--sun),var(--rose));
   color:#fff; font-weight:900; font-size:15px; border-radius:15px; padding:13px; box-shadow:0 5px 0 #c4396a}
 .nextup a:active{transform:translateY(4px); box-shadow:0 1px 0 #c4396a}
+.nextup .soon{display:block; text-align:center; background:rgba(255,255,255,.1); border:2.5px dashed rgba(255,255,255,.38);
+  color:#fff; font-weight:900; font-size:15px; border-radius:15px; padding:13px 12px; letter-spacing:.5px}
+.nextup .soon span{display:block; font-size:11px; font-weight:700; color:#bdb0e4; letter-spacing:1.6px; margin-bottom:3px}
+.nextup .badge{display:inline-block; background:var(--sun); color:#3a2300; font-size:10.5px; font-weight:900;
+  border-radius:999px; padding:2px 10px; letter-spacing:1px; margin-bottom:7px}
 .foot{text-align:center; font-size:10.5px; color:#9b93b8; margin-top:16px; line-height:1.85; font-weight:600}
 </style>
 </head>
@@ -853,9 +858,10 @@ function showEnding(){
       <button class="btn ghost" id="openGl" type="button" style="margin-top:10px">用語集をひらく</button>
     </div>
     <div class="nextup">
-      <h4>ここから先、本格的にやってみたい人へ</h4>
-      <p>フルバージョンでは、実在の助成金制度を名指しで扱います。ギャップファンドからD-Global、AMEDの橋渡し拠点まで、どの枠にいつ出すか。四半期ごとに自分の時間を配り、VCと組み、審査のヒアリングに答え、28ターンで事業化まで持っていくシミュレーションです。</p>
-      <a href="https://claude.ai/artifact/RdTxPnhjJMJrAW5wXiX5b5" target="_blank" rel="noopener">フルバージョンへ進む →</a>
+      <div class="badge">NEXT</div>
+      <h4>次は、実践編。</h4>
+      <p>実在の助成金制度を名指しで扱います。ギャップファンドからD-Global、AMEDの橋渡し拠点まで、どの枠に、いつ出すか。四半期ごとに限られた自分の時間を配り、VCと組み、審査のヒアリングに答え、28ターンで事業化まで持っていく。ここからが本番です。</p>
+      <div class="soon"><span>COMING SOON</span>近日公開</div>
     </div>
     <button class="btn alt" id="again" type="button" style="margin-top:12px">別の発見で、もう一度</button>
   </div></div></div>`);
