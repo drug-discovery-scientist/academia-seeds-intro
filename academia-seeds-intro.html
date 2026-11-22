@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>アカデミア発シーズの事業化編 入門編</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#2d2150; --ink2:#6b6390; --line:#eae4fb;
+  --grape:#7c4dff; --rose:#ff5d8f; --sun:#ffb02e; --mint:#16c79a; --sky:#19b7f5;
+  --pale:#f3edff; --card:#ffffff; --bg:#faf7ff;
+  --r:22px; --sh:0 10px 0 rgba(124,77,255,.13), 0 18px 40px rgba(80,50,160,.13);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; padding:0}
+body{
+  font-family:"M PLUS Rounded 1c",system-ui,sans-serif; color:var(--ink);
+  background:
+    radial-gradient(900px 500px at 8% -8%, #ffe9f3 0%, rgba(255,233,243,0) 60%),
+    radial-gradient(800px 500px at 102% 4%, #e3f6ff 0%, rgba(227,246,255,0) 58%),
+    radial-gradient(700px 600px at 50% 110%, #eafaf3 0%, rgba(234,250,243,0) 60%),
+    var(--bg);
+  min-height:100vh; line-height:1.78; -webkit-text-size-adjust:100%;
+}
+.app{max-width:560px; margin:0 auto; padding:0 15px 60px}
+
+/* ===== ヘッダ ===== */
+.top{position:sticky; top:0; z-index:30; padding:9px 0 8px;
+  background:linear-gradient(180deg, var(--bg) 72%, rgba(250,247,255,0));}
+.toprow{display:flex; align-items:center; gap:8px}
+.chip{display:inline-flex; align-items:center; gap:5px; background:#fff; border:2.5px solid var(--line);
+  border-radius:999px; padding:5px 11px; font-size:11.5px; font-weight:800; color:var(--ink2); white-space:nowrap}
+.chip b{color:var(--grape); font-size:13px}
+.chip.word{border-color:#ffe2b0; color:#a9712a; cursor:pointer}
+.chip.word b{color:var(--sun)}
+.chip.word:active{transform:scale(.95)}
+.dots{display:flex; gap:4px; flex:1; align-items:center}
+.dot{flex:1; height:6px; border-radius:99px; background:#e7e0f8; transition:.3s}
+.dot.on{background:var(--grape)} .dot.now{background:var(--rose); transform:scaleY(1.9)}
+
+/* ===== メーター ===== */
+.bars{display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-top:8px}
+.bar{background:#fff; border:2.5px solid var(--line); border-radius:15px; padding:7px 9px 8px}
+.bar.c1{border-color:#d9c9ff} .bar.c2{border-color:#ffd3e1} .bar.c3{border-color:#ffe6b8}
+.bl{display:flex; align-items:center; gap:4px; font-size:10.5px; font-weight:800; color:var(--ink2); margin-bottom:5px}
+.ico{width:13px; height:13px; flex:none}
+.bar.c1 .ico{color:var(--grape)} .bar.c2 .ico{color:var(--rose)} .bar.c3 .ico{color:var(--sun)}
+.bv{display:flex; gap:3px}
+.bv i{flex:1; height:8px; border-radius:99px; background:#eee7fb; transition:.25s}
+.bar.c1 .bv i.on{background:var(--grape)} .bar.c2 .bv i.on{background:var(--rose)} .bar.c3 .bv i.on{background:var(--sun)}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
+.bar.pop{animation:pop .45s}
+
+/* ===== カード ===== */
+.scene{background:var(--card); border:3px solid #fff; border-radius:var(--r); box-shadow:var(--sh);
+  overflow:hidden; margin-top:12px; animation:rise .4s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes rise{from{opacity:0; transform:translateY(16px) scale(.98)}to{opacity:1; transform:none}}
+.art{display:block; width:100%; height:auto; background:linear-gradient(170deg,#fbf8ff,#f3edff)}
+.scene-bd{padding:16px 17px 4px}
+.scene-bd h2{margin:0 0 9px; font-size:20px; font-weight:900; letter-spacing:.2px; line-height:1.4}
+.scene-bd p{margin:0 0 12px; font-size:14.5px; color:#453a6b}
+.say{background:linear-gradient(135deg,#fff6fa,#f4f0ff); border:2.5px dashed #ffd3e1; border-radius:16px;
+  padding:11px 13px; margin:0 0 12px; font-size:14px; font-weight:700; color:#6c3f6b; position:relative}
+.say .who{display:block; font-size:10.5px; font-weight:800; color:var(--rose); margin-bottom:3px; letter-spacing:.4px}
+.tagline{display:inline-block; background:var(--pale); color:var(--grape); font-size:10.5px; font-weight:900;
+  border-radius:999px; padding:2px 10px; margin-bottom:8px; letter-spacing:.4px}
+
+/* ===== 選択肢 ===== */
+.choices{padding:4px 13px 15px; display:grid; gap:9px}
+.ch{display:flex; gap:10px; align-items:flex-start; text-align:left; width:100%; cursor:pointer;
+  background:#fff; border:3px solid var(--line); border-radius:17px; padding:12px 13px;
+  font:inherit; font-size:14.5px; font-weight:800; color:var(--ink); transition:.16s; box-shadow:0 4px 0 #ece5fb}
+.ch:hover{border-color:#c9b4ff; transform:translateY(-1px)}
+.ch:active{transform:translateY(3px); box-shadow:0 1px 0 #ece5fb}
+.ch .n{flex:none; width:25px; height:25px; border-radius:50%; background:var(--grape); color:#fff;
+  display:grid; place-items:center; font-size:12.5px; font-weight:900; margin-top:1px}
+.ch:nth-child(2) .n{background:var(--sky)} .ch:nth-child(3) .n{background:var(--mint)}
+.ch:nth-child(4) .n{background:var(--sun)} .ch:nth-child(5) .n{background:var(--rose)}
+.ch small{display:block; font-size:11.5px; font-weight:600; color:var(--ink2); margin-top:2px; line-height:1.6}
+
+/* ===== 結果 ===== */
+.res{padding:2px 15px 16px}
+.res-box{border-radius:17px; padding:13px 14px; font-size:14px; font-weight:700; margin-bottom:11px; border:3px solid}
+.res-box.good{background:#eafaf3; border-color:#b6ecd9; color:#0d6a52}
+.res-box.soso{background:#fff7e8; border-color:#ffe0ab; color:#8a5c13}
+.res-box.bad{background:#fff0f4; border-color:#ffcada; color:#9c2a4e}
+.deltas{display:flex; gap:6px; flex-wrap:wrap; margin-top:9px}
+.delta{font-size:11px; font-weight:900; border-radius:999px; padding:3px 10px; background:#fff}
+.delta.up{color:var(--mint); border:2px solid #b6ecd9} .delta.down{color:var(--rose); border:2px solid #ffcada}
+.memo{background:linear-gradient(135deg,#fffaf0,#fff5fa); border:3px solid #ffe6b8; border-radius:17px;
+  padding:12px 14px; font-size:13.5px; color:#6a5530; margin-bottom:12px}
+.memo b{display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:900; color:#d08900;
+  margin-bottom:5px; letter-spacing:.5px}
+.memo b .ico{width:14px; height:14px; color:var(--sun)}
+.pharma{background:linear-gradient(135deg,#eef8ff,#f2fbff); border:3px solid #bfe6fb; border-radius:17px;
+  padding:12px 14px; font-size:13.5px; color:#1d5572; margin-bottom:12px}
+.pharma b{display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:900; color:#1189c4;
+  margin-bottom:5px; letter-spacing:.5px}
+.pharma b .ico{width:14px; height:14px; color:var(--sky)}
+.btn{display:block; width:100%; cursor:pointer; border:none; border-radius:17px; padding:14px;
+  font:inherit; font-size:15.5px; font-weight:900; color:#fff; letter-spacing:.6px;
+  background:linear-gradient(135deg,var(--grape),var(--rose)); box-shadow:0 5px 0 #5c33cc; transition:.14s}
+.btn:active{transform:translateY(4px); box-shadow:0 1px 0 #5c33cc}
+.btn.alt{background:linear-gradient(135deg,var(--sky),var(--mint)); box-shadow:0 5px 0 #0f93c4}
+.btn.ghost{background:#fff; color:var(--grape); border:3px solid var(--line); box-shadow:0 5px 0 #ece5fb}
+
+/* ===== 用語 ===== */
+j{border-bottom:2.5px dotted var(--sun); cursor:pointer; font-weight:800; color:#b5760e; padding-bottom:1px}
+j:active{background:#fff3d9}
+j.seen{border-bottom-color:#e2d6f5; color:inherit; font-weight:inherit}
+.scrim{position:fixed; inset:0; z-index:60; background:rgba(45,33,80,.52); backdrop-filter:blur(4px);
+  display:flex; align-items:flex-end; justify-content:center; padding:14px; animation:fade .2s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{background:#fff; border-radius:26px; border:4px solid #fff; box-shadow:0 -6px 50px rgba(60,30,120,.3);
+  width:100%; max-width:530px; max-height:84vh; overflow:auto; animation:up .3s cubic-bezier(.2,.9,.3,1.15)}
+@keyframes up{from{transform:translateY(40px); opacity:.5}to{transform:none; opacity:1}}
+.sheet-hd{display:flex; align-items:center; gap:9px; padding:16px 17px 0}
+.sheet-hd .bubble{width:38px; height:38px; border-radius:13px; display:grid; place-items:center; flex:none;
+  background:linear-gradient(135deg,#fff0d4,#ffe3ef); font-size:19px}
+.sheet-hd h3{margin:0; font-size:18px; font-weight:900}
+.sheet-hd .en{font-size:11px; font-weight:700; color:var(--ink2); letter-spacing:.3px}
+.sheet-bd{padding:11px 17px 4px; font-size:14px; color:#453a6b}
+.sheet-bd p{margin:0 0 10px}
+.sheet-ft{padding:4px 15px 16px}
+.glos{display:grid; gap:7px; padding:4px 15px 16px}
+.gl{display:flex; gap:9px; align-items:flex-start; background:#fcfaff; border:2.5px solid var(--line);
+  border-radius:14px; padding:9px 11px; cursor:pointer; text-align:left; font:inherit; width:100%}
+.gl:active{transform:scale(.99)}
+.gl .gi{flex:none; font-size:16px}
+.gl .gn{font-size:13.5px; font-weight:900}
+.gl .gs{font-size:11.5px; color:var(--ink2); font-weight:600; line-height:1.55}
+.gl.locked{opacity:.42}
+
+/* ===== タイトル／結末 ===== */
+.hero{text-align:center; padding:26px 16px 8px}
+.hero .kicker{font-size:11.5px; font-weight:900; letter-spacing:2.6px; color:var(--rose)}
+.hero h1{margin:5px 0 4px; font-size:29px; font-weight:900; line-height:1.3;
+  background:linear-gradient(100deg,var(--grape),var(--rose) 48%,var(--sun));
+  -webkit-background-clip:text; background-clip:text; color:transparent}
+.hero .sub{font-size:13.5px; color:var(--ink2); font-weight:700}
+.pills{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin:12px 0 2px}
+.pill{font-size:11px; font-weight:900; border-radius:999px; padding:4px 11px; background:#fff; border:2.5px solid var(--line); color:var(--ink2)}
+.end-hero{text-align:center; padding:6px 0 2px}
+.medal{width:106px; height:106px; display:block; margin:0 auto 4px}
+.end-title{font-size:24px; font-weight:900; margin:0}
+.end-sub{font-size:19px; letter-spacing:4px; color:var(--sun); margin-top:2px}
+.learned{background:#fcfaff; border:3px solid var(--line); border-radius:18px; padding:13px 15px; margin:12px 0}
+.learned h4{margin:0 0 8px; font-size:12px; font-weight:900; color:var(--grape); letter-spacing:.6px}
+.learned li{font-size:13.5px; margin-bottom:7px; color:#453a6b; font-weight:700}
+.learned ul{margin:0; padding-left:19px}
+.nextup{background:linear-gradient(135deg,#2d2150,#4a2f82); border-radius:20px; padding:17px 17px 15px; margin:13px 0 0; color:#fff}
+.nextup h4{margin:0 0 6px; font-size:16px; font-weight:900}
+.nextup p{margin:0 0 12px; font-size:13.5px; color:#d6cdf2}
+.nextup a{display:block; text-align:center; text-decoration:none; background:linear-gradient(135deg,var(--sun),var(--rose));
+  color:#fff; font-weight:900; font-size:15px; border-radius:15px; padding:13px; box-shadow:0 5px 0 #c4396a}
+.nextup a:active{transform:translateY(4px); box-shadow:0 1px 0 #c4396a}
+.foot{text-align:center; font-size:10.5px; color:#9b93b8; margin-top:16px; line-height:1.85; font-weight:600}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top" id="top" hidden>
+    <div class="toprow">
+      <div class="dots" id="dots"></div>
+      <button class="chip word" id="wordChip" type="button">📖 用語 <b id="wordN">0</b></button>
+    </div>
+    <div class="bars" id="bars"></div>
+  </div>
+  <div id="wrap"></div>
+  <div class="foot">
+    制度の名称と金額は2026年11月時点の公募要領にもとづく実在のものです。<br>登場するVC・企業・人物は架空です。
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const el = h => { const d=document.createElement("div"); d.innerHTML=h.trim(); return d.firstElementChild; };
+const rnd = n => Math.floor(Math.random()*n);
+
+/* ===================== 用語辞典 ===================== */
+const WORDS = {
+  seeds:{n:"シーズ", en:"seeds", i:"🌱", s:"薬のもとになりそうな研究成果",
+    b:"薬のもとになりそうな研究成果のこと。種という意味です。化合物のような「モノ」だけでなく、標的の発見、評価系、モデル動物、技術そのものもシーズと呼ばれます。<br><br>アカデミアの先生が「うちにシーズがあります」と言うとき、相手が想像しているものと実際が食い違っていることがよくあるので、何がどこまであるのかを具体的に言うほうが話が早く進みます。"},
+  target:{n:"標的（ターゲット）", en:"target", i:"🎯", s:"薬が結合して効かせたい分子",
+    b:"薬が結合して、働きを変えたい相手の分子のこと。多くはタンパク質です。<br><br>「この遺伝子をノックアウトしたら病気が良くなった」は標的の候補が見つかったということで、まだ薬があるわけではありません。標的と薬は別のものです。"},
+  moa:{n:"MoA（作用機序）", en:"Mechanism of Action", i:"⚙️", s:"どういう仕組みで効くのか",
+    b:"その薬が、体の中のどこに、どう働いて効果を出すのかという説明のこと。<br><br>効いているデータがあっても、なぜ効くのかが説明できないと開発は進めにくくなります。途中で副作用が出たときに、原因を切り分けられないからです。"},
+  modality:{n:"モダリティ", en:"modality", i:"💊", s:"薬の形（低分子・抗体・核酸・細胞など）",
+    b:"薬の形のこと。低分子、抗体やペプチドなどのタンパク質、核酸（ASOやmRNA）、細胞・遺伝子治療などに分かれます。<br><br>同じ標的を狙っても、どの形で作るかで必要な実験、費用、製造の難しさ、規制の進み方、組む相手が全部変わります。"},
+  assay:{n:"アッセイ", en:"assay", i:"🧪", s:"効果や性質を測る実験系",
+    b:"効果や性質を測るための実験系のこと。細胞を使うもの、タンパク質だけを使うもの、動物を使うものがあります。<br><br>創薬ではこの評価系の良し悪しがプロジェクト全体の速さを決めます。良い評価系がないと、どの化合物が良いのか判断できません。"},
+  window:{n:"アッセイウィンドウ", en:"assay window", i:"📏", s:"効いた群と効かない群の差の大きさ",
+    b:"効いている条件と効いていない条件の、測定値の差の大きさのこと。シグナル幅とも言います。<br><br>「統計的に有意」と「差が大きい」は別の話です。n数を増やせば小さな差でも有意になりますが、差そのものが小さいと、薬にしたときの効き目も小さいかもしれない。製薬企業はこの幅を必ず見ます。"},
+  n:{n:"n数", en:"sample size", i:"🔢", s:"何回・何匹・何検体で確かめたか",
+    b:"何回、何匹、何検体で確かめたかという数のこと。<br><br>同じ日に同じプレートで3ウェル測ったものを n=3 と書くのと、別の日に独立して3回やり直したものを n=3 と書くのでは、意味がまったく違います。後者を独立実験といい、創薬の側が見たいのはこちらです。"},
+  repro:{n:"再現性", en:"reproducibility", i:"🔁", s:"誰がやっても同じ結果になるか",
+    b:"同じ実験をもう一度やったとき、同じ結果が出るかどうか。さらに、別の人が、別の施設でやっても出るかどうか。<br><br>創薬で最も重視される性質のひとつです。1回うまくいった現象より、何度やっても同じように出る現象のほうが価値があります。"},
+  effect:{n:"エフェクトサイズ", en:"effect size", i:"📐", s:"効果の大きさそのもの",
+    b:"効果の大きさそのものを表す指標。p値が「差があると言えるか」を答えるのに対して、こちらは「どれくらい差があるか」を答えます。<br><br>論文ではp値だけが書かれていることが多いのですが、開発の判断に使うのは効果の大きさのほうです。"},
+  pval:{n:"p値と多重比較", en:"p-value", i:"📊", s:"有意差の出し方にも作法がある",
+    b:"p値は、偶然でもこれくらいの差は出るのか、を見る指標です。慣習的に0.05未満を有意とします。<br><br>気をつけるのは、たくさんの比較を同時にすると、偶然だけで有意になるものが出てくること。これを補正する手続きを多重比較補正といいます。補正されていない大量の比較は、創薬の側から見ると割り引いて読まれます。"},
+  control:{n:"ポジコン・ネガコン", en:"positive / negative control", i:"⚖️", s:"実験系が正しく動いている証拠",
+    b:"効くとわかっているものを入れたとき確かに効く（ポジティブコントロール）、効かないはずのものを入れたとき効かない（ネガティブコントロール）。この2つが揃って、はじめて実験系が信用できます。<br><br>新しい現象の報告でここが抜けていると、現象そのものより実験系が疑われます。"},
+  blind:{n:"ブラインド", en:"blinding", i:"🙈", s:"どの群か知らずに測る",
+    b:"測定する人が、その検体がどの群なのかを知らない状態で測ること。<br><br>特に組織像のスコアリングや行動実験のように、人の判断が入る測定では、無意識の偏りが入ります。ブラインドされているかどうかは、データの信頼度を大きく変えます。"},
+  mm:{n:"M&M（材料と方法）", en:"Materials and Methods", i:"📋", s:"他人が再現できる書き方か",
+    b:"論文の実験方法の節のこと。<br><br>創薬の側は、ここを「自分たちのラボで同じことができるか」という目で読みます。抗体のメーカーと製品番号、細胞の由来と継代数、試薬のロット、装置の設定、解析のコード。ここが薄いと、技術の評価以前に再現実験の計画が立ちません。"},
+  image:{n:"代表画像と定量", en:"representative image", i:"🖼️", s:"きれいな一枚ではなく数値で",
+    b:"きれいな一枚の写真は説得力がありますが、それ1枚では何回やって何枚のうちの1枚なのかがわかりません。<br><br>視野をいくつ取って、どう数値化して、ばらつきはどうだったか。画像が定量されているかどうかは、論文を読む創薬研究者が最初に見るところのひとつです。"},
+  tpp:{n:"TPP（目標製品プロファイル）", en:"Target Product Profile", i:"🗺️", s:"どんな薬にしたいかの設計図",
+    b:"最終的にどんな製品にしたいかを、項目ごとに言葉にした設計図。対象疾患、投与経路、効果の目標、安全性の許容範囲、既存治療との差を書きます。<br><br>これがあると、取るべきデータが逆算で決まります。一度書いて終わりではなく、結果が出るたびに改訂していくものです。"},
+  poc:{n:"PoC（概念実証）", en:"Proof of Concept", i:"✅", s:"考えが正しいと示す一番の実験",
+    b:"自分の仮説が本当に成り立つことを示す、いちばん重要な実験のこと。<br><br>非臨床のPoCは、たとえば病気のモデル動物で狙った効果が出ること。臨床のPoCは、患者さんで効果の兆しが見えること。資金調達の節目はたいていここに置かれます。"},
+  unmet:{n:"アンメットニーズ", en:"unmet medical needs", i:"🩹", s:"まだ満たされていない医療の必要",
+    b:"今ある治療では足りていない医療上の必要のこと。<br><br>患者数が多いかどうかだけでなく、既存の治療があるかどうかで見ます。患者数が少なくても、治療法がまったくない病気なら価値は高く評価されます。"},
+  biomarker:{n:"バイオマーカー", en:"biomarker", i:"🔖", s:"効く人を見分ける目印",
+    b:"病気の状態や、薬が効いているかどうかを示す、測れる指標のこと。血液中の分子、画像、遺伝子変異などがあります。<br><br>効く患者さんを事前に選べると、臨床試験が小さく速くなります。バイオマーカーがあるプロジェクトが高く評価されるのはこのためです。"},
+  nonclin:{n:"非臨床試験", en:"preclinical study", i:"🐭", s:"ヒトに入れる前の試験",
+    b:"ヒトに投与する前に行う試験の総称。効果を見る薬理試験、体内での動きを見る薬物動態、安全性を見る毒性試験があります。<br><br>このうち安全性の試験は、GLPという決められた基準の下で実施したものでないと、治験の申請には使えません。"},
+  glp:{n:"GLP", en:"Good Laboratory Practice", i:"📑", s:"安全性試験の品質基準",
+    b:"安全性試験を行うときに守るべき、国で決められた品質管理の基準のこと。<br><br>大学の実験室で得たデータは、どれだけ質が高くてもGLPではありません。治験に進むには、GLPに対応した施設での試験をやり直すことになります。費用も時間も別に必要です。"},
+  clin:{n:"治験", en:"clinical trial", i:"🏥", s:"ヒトで調べる試験",
+    b:"薬の候補をヒトで調べる試験のこと。安全性を主に見る第1相、効く量や効果の兆しを見る第2相、既存治療と比べる第3相と進みます。<br><br>ここから費用の桁が変わります。アカデミアが単独で走らせるのは難しく、企業や大型の公的資金が必要になる段階です。"},
+  pmda:{n:"PMDA", en:"医薬品医療機器総合機構", i:"🏛️", s:"薬を審査する国の機関",
+    b:"医薬品や医療機器の審査と安全対策を担う国の機関。<br><br>開発の早い段階から相談できる仕組みがあり、無料のRS総合相談と事前面談、正式な記録が残る有料の対面助言があります。大学やベンチャーには手数料の低額要件もあります。"},
+  cro:{n:"CRO", en:"Contract Research Organization", i:"🔬", s:"試験を請け負ってくれる会社",
+    b:"試験を請け負って実施してくれる会社。薬物動態、毒性、薬理の試験などを外注できます。<br><br>自分のラボでやるより費用はかかりますが、手順が標準化されているので、データの信頼度は上がります。何を内製して何を外注するかは、先に項目ごとに決めておくのが鉄則です。"},
+  cdmo:{n:"CDMO", en:"Contract Development and Manufacturing Organization", i:"🏭", s:"薬を作ってくれる会社",
+    b:"薬そのものの製造を開発段階から請け負ってくれる会社。<br><br>細胞・遺伝子治療や抗体では、作れるCDMOの数が限られていて枠の取り合いになります。効果のデータが揃っていても、作る場所が押さえられないと先に進めません。"},
+  tlo:{n:"TLO・産学連携本部", en:"Technology Licensing Organization", i:"🏫", s:"大学の技術移転の窓口",
+    b:"大学の研究成果を企業に渡したり、特許を管理したりする窓口。大学によって産学連携本部、知財部門、TLOなど呼び方が違います。<br><br>薬にしたいと思ったら最初に相談する場所です。特許の出願費用を大学が負担してくれる場合もあります。"},
+  ip:{n:"知財（特許）", en:"intellectual property", i:"🔒", s:"独占して使える権利",
+    b:"発明を一定期間、独占して実施できる権利のこと。<br><br>創薬では特許がすべての前提になります。誰でも真似できる技術には、何百億円もかけて開発する人が現れないからです。"},
+  novelty:{n:"新規性", en:"novelty", i:"🆕", s:"まだ誰も公表していないこと",
+    b:"特許が認められる条件のひとつで、出願の時点でまだ世の中に公表されていないこと。<br><br>学会発表や論文で先に公表してしまうと、新規性が失われるおそれがあります。発表の前に出願するのが原則です。"},
+  shokumu:{n:"職務発明", en:"employee invention", i:"🏢", s:"権利は原則として大学のもの",
+    b:"大学や会社の業務として生まれた発明のこと。権利は原則として所属機関に帰属します。<br><br>つまり自分が出した成果でも、自分の会社で使うには大学からライセンスを受ける必要があり、対価も発生します。"},
+  vc:{n:"VC（ベンチャーキャピタル）", en:"Venture Capital", i:"💼", s:"株を持つ形でお金を入れる投資家",
+    b:"将来伸びそうな会社に、株を持つ形でお金を入れる投資家。<br><br>創薬に投資するVCにも種類があり、資金を入れるだけのところ、研究員を派遣してくれるところ、申請書を一緒に書いてくれるところがあります。事務所ごとに方針も人手も違うので、誰と組むかは大きな分かれ目です。"},
+  cvc:{n:"CVC", en:"Corporate Venture Capital", i:"🏢", s:"事業会社が持つ投資部門",
+    b:"製薬企業などの事業会社が持つ投資部門のこと。<br><br>資金だけでなく、親会社の開発の知見や設備にアクセスできることがあります。一方で、将来その親会社以外に導出しにくくなる可能性もあるので、関係の作り方には注意が要ります。"},
+  equity:{n:"エクイティと希薄化", en:"equity / dilution", i:"🥧", s:"株でお金を集めると持分が減る",
+    b:"株を発行してお金を集めることをエクイティ調達といい、そのたびに既存の株主の持分比率は下がります。これを希薄化といいます。<br><br>減ること自体は悪いことではありません。10割の100万円より、2割の100億円のほうが大きいからです。"},
+  grant:{n:"助成金（グラント）", en:"grant", i:"🎁", s:"返さなくていい、株も渡さないお金",
+    b:"返済の義務がなく、株も渡さずに受け取れる資金のこと。非希薄化資金とも呼ばれます。<br><br>日本はこの種の公的支援が手厚いので、使えるうちに繋いでいくと、最後に自分たちの手元に残る持分が変わります。"},
+  jst:{n:"JST", en:"科学技術振興機構", i:"🌏", s:"文科省系。研究を事業に近づける側",
+    b:"文部科学省が所管する研究支援の機関。大学発新産業創出基金事業の枠組みで、ギャップファンドやD-Globalなどを運営しています。<br><br>研究成果を事業に近づけていく方向の支援が中心で、分野は医療に限りません。"},
+  amed:{n:"AMED", en:"日本医療研究開発機構", i:"🧬", s:"厚労省系。医療の実用化側",
+    b:"医療分野の研究開発を一元的に支援する機関。橋渡し研究プログラムや創薬ベンチャーエコシステム強化事業などを運営しています。<br><br>医療に特化していて、薬事や臨床を見据えた視点が強いのが特徴です。同じ研究でも、JSTとAMEDでは評価されるポイントが変わります。"},
+  gap:{n:"ギャップファンド", en:"gap fund", i:"🌉", s:"研究と事業化の間を埋める最初の資金",
+    b:"論文になる研究と、投資を受けられる事業の間の谷を埋めるための資金。JSTの枠組みで全国9つのプラットフォームが運営しています。<br><br>ステップ1は最長1年で原則500万円（特別枠1,000万円）。研究代表者が単独で応募でき、VCとの共同申請は不要なので、ここが最初の一歩になります。"},
+  dd:{n:"デューデリジェンス", en:"due diligence", i:"🔍", s:"投資や導出の前の詳しい調査",
+    b:"投資や導出の前に、技術、知財、データ、チームを詳しく調べる工程のこと。生データや実験ノートの提出を求められます。<br><br>ネガティブなデータがあること自体で降りる相手はほとんどいません。出てこなかったことで降ります。"},
+  license:{n:"導出（ライセンスアウト）", en:"license out", i:"🤝", s:"企業に権利を渡して開発してもらう",
+    b:"自分たちの技術や化合物の権利を企業に渡して、そこから先の開発を進めてもらうこと。契約時の一時金、節目ごとのマイルストン、売上に応じたロイヤルティを受け取ります。<br><br>撤退ではありません。患者さんに届くまでの時間で見ると、むしろ最短になることがよくあります。"},
+  burn:{n:"バーンレート", en:"burn rate", i:"🔥", s:"毎月出ていくお金",
+    b:"毎月出ていく費用のこと。人件費、場所代、試薬、外注費。<br><br>手元の資金をバーンレートで割ると、何か月もつかがわかります。この数字をランウェイといい、次の資金調達はここから逆算して始めます。"},
+  seisan:{n:"精算払い", en:"reimbursement", i:"🧾", s:"先に払って、あとで戻ってくる",
+    b:"助成金でよくある支払い方式。先に自分たちで支払い、証憑を提出して、あとから補助分が戻ってきます。<br><br>採択額が大きくても、手元の現金がないと実際には動けません。採択されたのに回らない、という事態はここで起きます。"}
+};
+const WORD_ORDER = Object.keys(WORDS);
+
+/* ===================== 絵 ===================== */
+const grape="#7c4dff", rose="#ff5d8f", sun="#ffb02e", mint="#16c79a", sky="#19b7f5",
+      ink="#2d2150", pale="#f3edff";
+const ART = {
+lab:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="58" cy="44" r="27" fill="#ffe9f3"/><circle cx="344" cy="150" r="30" fill="#e3f6ff"/>
+  <circle cx="330" cy="40" r="15" fill="#eafaf3"/>
+  <path d="M168 34h64v34l38 76a16 16 0 0 1-14 24h-112a16 16 0 0 1-14-24l38-76z" fill="#fff" stroke="${ink}" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M160 128h80a16 16 0 0 1 2 8 16 16 0 0 1-14 8h-56a16 16 0 0 1-14-8 16 16 0 0 1 2-8z" fill="${grape}"/>
+  <path d="M156 136h88l10 20a12 12 0 0 1-10 18h-88a12 12 0 0 1-10-18z" fill="${grape}" opacity=".85"/>
+  <circle cx="182" cy="150" r="7" fill="${sun}"/><circle cx="214" cy="158" r="5" fill="${mint}"/><circle cx="234" cy="146" r="4" fill="${sky}"/>
+  <rect x="164" y="26" width="72" height="12" rx="6" fill="${rose}"/>
+  <g fill="${sun}"><path d="M300 86l5 11 11 5-11 5-5 11-5-11-11-5 11-5z"/></g>
+  <g fill="${rose}"><path d="M96 62l4 8 8 4-8 4-4 8-4-8-8-4 8-4z"/></g>
+</svg>`,
+paper:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="54" cy="150" r="28" fill="#eafaf3"/><circle cx="348" cy="44" r="26" fill="#ffe9f3"/>
+  <rect x="112" y="24" width="124" height="148" rx="12" fill="#fff" stroke="${ink}" stroke-width="5" transform="rotate(-6 174 98)"/>
+  <rect x="150" y="34" width="124" height="148" rx="12" fill="#fff" stroke="${ink}" stroke-width="5"/>
+  <rect x="166" y="52" width="92" height="9" rx="4.5" fill="${grape}"/>
+  <rect x="166" y="70" width="70" height="7" rx="3.5" fill="#e3dcf5"/>
+  <rect x="166" y="84" width="88" height="7" rx="3.5" fill="#e3dcf5"/>
+  <rect x="166" y="104" width="40" height="34" rx="6" fill="${sky}" opacity=".7"/>
+  <rect x="214" y="104" width="44" height="34" rx="6" fill="${mint}" opacity=".7"/>
+  <rect x="166" y="150" width="60" height="7" rx="3.5" fill="#e3dcf5"/>
+  <g fill="${sun}"><path d="M308 96l6 13 13 6-13 6-6 13-6-13-13-6 13-6z"/></g>
+</svg>`,
+office:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="56" cy="52" r="26" fill="#e3f6ff"/><circle cx="346" cy="140" r="28" fill="#fff4e0"/>
+  <path d="M120 86l80-50 80 50v78a8 8 0 0 1-8 8H128a8 8 0 0 1-8-8z" fill="#fff" stroke="${ink}" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M110 88l90-56 90 56" fill="none" stroke="${grape}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="150" y="104" width="38" height="34" rx="6" fill="${sky}" opacity=".65"/>
+  <rect x="212" y="104" width="38" height="34" rx="6" fill="${mint}" opacity=".65"/>
+  <rect x="180" y="146" width="40" height="26" rx="5" fill="${grape}"/>
+  <circle cx="92" cy="112" r="12" fill="${rose}"/><path d="M78 148c0-9 6-16 14-16s14 7 14 16z" fill="${rose}"/>
+</svg>`,
+pharma:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="46" r="24" fill="#eafaf3"/><circle cx="352" cy="146" r="26" fill="#e3f6ff"/>
+  <rect x="92" y="62" width="76" height="110" rx="10" fill="#fff" stroke="${ink}" stroke-width="5"/>
+  <rect x="176" y="34" width="68" height="138" rx="10" fill="#fff" stroke="${ink}" stroke-width="5"/>
+  <rect x="252" y="78" width="60" height="94" rx="10" fill="#fff" stroke="${ink}" stroke-width="5"/>
+  <g fill="${sky}" opacity=".7">
+    <rect x="106" y="78" width="20" height="18" rx="4"/><rect x="134" y="78" width="20" height="18" rx="4"/>
+    <rect x="106" y="106" width="20" height="18" rx="4"/><rect x="134" y="106" width="20" height="18" rx="4"/></g>
+  <g fill="${grape}" opacity=".75">
+    <rect x="190" y="52" width="18" height="18" rx="4"/><rect x="214" y="52" width="18" height="18" rx="4"/>
+    <rect x="190" y="80" width="18" height="18" rx="4"/><rect x="214" y="80" width="18" height="18" rx="4"/>
+    <rect x="190" y="108" width="18" height="18" rx="4"/><rect x="214" y="108" width="18" height="18" rx="4"/></g>
+  <g fill="${mint}" opacity=".7">
+    <rect x="266" y="94" width="18" height="18" rx="4"/><rect x="288" y="94" width="14" height="18" rx="4"/>
+    <rect x="266" y="122" width="18" height="18" rx="4"/><rect x="288" y="122" width="14" height="18" rx="4"/></g>
+  <rect x="198" y="140" width="24" height="32" rx="4" fill="${rose}"/>
+</svg>`,
+magnify:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="54" cy="142" r="28" fill="#ffe9f3"/><circle cx="342" cy="46" r="24" fill="#eafaf3"/>
+  <rect x="96" y="40" width="150" height="110" rx="12" fill="#fff" stroke="${ink}" stroke-width="5"/>
+  <g stroke="${sky}" stroke-width="7" stroke-linecap="round" fill="none"><path d="M118 126V98M142 126V78M166 126V106M190 126V86M214 126V112"/></g>
+  <circle cx="258" cy="92" r="46" fill="#fff" fill-opacity=".55" stroke="${grape}" stroke-width="8"/>
+  <path d="M292 126l30 30" stroke="${grape}" stroke-width="13" stroke-linecap="round"/>
+  <g stroke="${rose}" stroke-width="6" stroke-linecap="round" fill="none"><path d="M240 100l12 12 24-30"/></g>
+  <g fill="${sun}"><path d="M86 70l5 10 10 5-10 5-5 10-5-10-10-5 10-5z"/></g>
+</svg>`,
+map:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="56" cy="46" r="26" fill="#fff4e0"/><circle cx="346" cy="148" r="28" fill="#e3f6ff"/>
+  <path d="M104 44l62-18 68 22 62-20v116l-62 20-68-22-62 18z" fill="#fff" stroke="${ink}" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M166 26v116M234 48v116" stroke="#e3dcf5" stroke-width="4"/>
+  <path d="M120 112c26-30 46 10 70-20s44 4 72-26" fill="none" stroke="${mint}" stroke-width="5" stroke-dasharray="9 8" stroke-linecap="round"/>
+  <circle cx="196" cy="86" r="16" fill="${rose}"/><circle cx="196" cy="86" r="6" fill="#fff"/>
+  <circle cx="128" cy="108" r="8" fill="${sky}"/><circle cx="276" cy="62" r="8" fill="${sun}"/>
+</svg>`,
+money:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="54" cy="48" r="26" fill="#eafaf3"/><circle cx="344" cy="142" r="28" fill="#ffe9f3"/>
+  <rect x="96" y="76" width="150" height="92" rx="14" fill="#fff" stroke="${ink}" stroke-width="5"/>
+  <circle cx="171" cy="122" r="26" fill="${sun}"/><circle cx="171" cy="122" r="17" fill="#fff" opacity=".4"/>
+  <path d="M160 112h22M160 122h22M171 106v34" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+  <path d="M248 56c34 0 56 22 56 48" fill="none" stroke="${mint}" stroke-width="7" stroke-linecap="round" stroke-dasharray="3 12"/>
+  <path d="M276 26l10 20 22 4-16 15 4 22-20-11-20 11 4-22-16-15 22-4z" fill="${rose}"/>
+  <rect x="118" y="92" width="36" height="8" rx="4" fill="#e3dcf5"/>
+</svg>`,
+meeting:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="54" cy="44" r="26" fill="#eafaf3"/><circle cx="348" cy="146" r="28" fill="#ffe9f3"/>
+  <ellipse cx="200" cy="142" rx="112" ry="26" fill="#fff" stroke="${ink}" stroke-width="5"/>
+  <circle cx="124" cy="92" r="20" fill="${sky}"/><circle cx="200" cy="78" r="20" fill="${sun}"/><circle cx="276" cy="92" r="20" fill="${mint}"/>
+  <path d="M104 124c0-12 9-20 20-20s20 8 20 20z" fill="${sky}" opacity=".5"/>
+  <path d="M180 116c0-12 9-20 20-20s20 8 20 20z" fill="${sun}" opacity=".5"/>
+  <path d="M256 124c0-12 9-20 20-20s20 8 20 20z" fill="${mint}" opacity=".5"/>
+  <g fill="${rose}" font-family="M PLUS Rounded 1c" font-size="26" font-weight="900"><text x="112" y="56">?</text><text x="266" y="56">?</text></g>
+</svg>`,
+crossroad:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="58" cy="44" r="26" fill="#ffe9f3"/><circle cx="344" cy="40" r="22" fill="#eafaf3"/>
+  <path d="M200 178 L136 58" stroke="${sky}" stroke-width="13" stroke-linecap="round"/>
+  <path d="M200 178 L184 44" stroke="${grape}" stroke-width="13" stroke-linecap="round"/>
+  <path d="M200 178 L244 50" stroke="${mint}" stroke-width="13" stroke-linecap="round"/>
+  <path d="M200 178 L290 70" stroke="${sun}" stroke-width="13" stroke-linecap="round"/>
+  <circle cx="136" cy="52" r="14" fill="${sky}"/><circle cx="183" cy="38" r="14" fill="${grape}"/>
+  <circle cx="246" cy="44" r="14" fill="${mint}"/><circle cx="294" cy="64" r="14" fill="${sun}"/>
+  <circle cx="200" cy="178" r="17" fill="#fff" stroke="${ink}" stroke-width="5"/>
+</svg>`,
+team:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="52" cy="140" r="26" fill="#e3f6ff"/><circle cx="350" cy="50" r="26" fill="#fff4e0"/>
+  <g><circle cx="200" cy="58" r="24" fill="${grape}"/><path d="M168 112c0-18 14-30 32-30s32 12 32 30z" fill="${grape}" opacity=".55"/></g>
+  <g><circle cx="118" cy="98" r="20" fill="${sky}"/><path d="M92 144c0-15 12-25 26-25s26 10 26 25z" fill="${sky}" opacity=".5"/></g>
+  <g><circle cx="282" cy="98" r="20" fill="${mint}"/><path d="M256 144c0-15 12-25 26-25s26 10 26 25z" fill="${mint}" opacity=".5"/></g>
+  <path d="M142 92l36-18M258 92l-36-18" stroke="${rose}" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 10"/>
+  <g fill="${sun}"><path d="M200 150l5 11 11 5-11 5-5 11-5-11-11-5 11-5z"/></g>
+</svg>`,
+rocket:`<svg class="art" viewBox="0 0 400 190" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="68" cy="50" r="26" fill="#f3edff"/><circle cx="338" cy="140" r="30" fill="#ffe9f3"/>
+  <path d="M200 16c28 24 40 58 40 92l-22 22h-36l-22-22c0-34 12-68 40-92z" fill="#fff" stroke="${grape}" stroke-width="5" stroke-linejoin="round"/>
+  <circle cx="200" cy="80" r="17" fill="${sky}"/>
+  <path d="M160 100l-26 28 28-4z" fill="${rose}"/><path d="M240 100l26 28-28-4z" fill="${rose}"/>
+  <path d="M184 132h32l-7 28c-3 11-15 11-18 0z" fill="${sun}"/>
+  <circle cx="106" cy="118" r="5" fill="${sun}"/><circle cx="300" cy="66" r="7" fill="${mint}"/><circle cx="292" cy="132" r="4" fill="${sky}"/>
+</svg>`,
+medal:(c1,c2)=>`<svg class="medal" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <path d="M30 4h22l10 56H42z" fill="${c2}"/><path d="M90 4H68l-10 56h20z" fill="${c2}" opacity=".72"/>
+  <circle cx="60" cy="78" r="36" fill="${c1}"/><circle cx="60" cy="78" r="27" fill="#fff" opacity=".26"/>
+  <path d="M60 61l6.3 12.8L80 75.8l-10 9.7 2.4 13.7L60 92.7l-12.4 6.5L50 85.5l-10-9.7 13.7-2z" fill="#fff"/>
+</svg>`
+};
+const ICON = {
+  data:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M4 20V10M10 20V5M16 20v-8M21 20H3"/></svg>',
+  team:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.2 2.5-5.4 5.5-5.4s5.5 2.2 5.5 5.4"/><path d="M16.5 6.2a3 3 0 0 1 0 5.6M18 20c0-2.2-.7-3.8-1.8-4.8"/></svg>',
+  money:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 5l6 7 6-7M8 13h8M8 17h8M12 12v8"/></svg>',
+  bulb:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.4 10.9V16h6.8v-2.1A6 6 0 0 0 12 3z"/></svg>',
+  eye:'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg>'
+};
+
+/* ===================== 発見のカテゴリ ===================== */
+const DISC = [
+ { id:"mechanism", i:"🎯", c:grape, n:"病気の原因になっている分子や経路を見つけた",
+   eg:"この遺伝子を止めると病態が改善する、この経路が患者で異常に動いている、など",
+   got:"<j data-k='target'>標的</j>の候補", lack:"それを叩く手段",
+   first:"標的はある。叩くものがない",
+   say:"で、何で叩くんですか。抗体ですか、低分子ですか" },
+ { id:"compound", i:"💊", c:rose, n:"効く化合物・抗体・核酸を見つけた",
+   eg:"スクリーニングで出たヒット、作った抗体、設計した核酸など",
+   got:"効く<j data-k='seeds'>モノ</j>", lack:"その標的でヒトの病気が治るという裏づけ",
+   first:"モノはある。標的が疑われる",
+   say:"その標的を叩いて、本当にヒトの病気が良くなるんですか" },
+ { id:"biology", i:"🔬", c:mint, n:"新しい生命現象・細胞の仕組みを見つけた",
+   eg:"オートファジーのような、それまで知られていなかった細胞の働き",
+   got:"新しいサイエンス", lack:"どの病気の話なのか",
+   first:"現象は面白い。病気が決まらない",
+   say:"それは、どの病気の、どんな患者さんを救う話になりますか" },
+ { id:"model", i:"🧫", c:sky, n:"病気を再現するモデルを作った",
+   eg:"オルガノイド、疾患モデル動物、患者iPS細胞から作った評価系など",
+   got:"評価できる場所", lack:"そこに載せる薬",
+   first:"モデルは薬ではない",
+   say:"それ自体は薬ではないですよね。売るんですか、使うんですか" },
+ { id:"delivery", i:"🚚", c:sun, n:"体の中の届かない場所に届ける手段を作った",
+   eg:"脳や特定の臓器に届けるDDS、新しいベクター、投与経路の工夫など",
+   got:"運ぶ手段", lack:"運ぶ中身",
+   first:"運べる。中身がない",
+   say:"で、何を載せるんですか。それは誰のものですか" },
+ { id:"newmod", i:"🧬", c:grape, n:"治療そのものになりうる分子や細胞を見つけた",
+   eg:"これまでにない細胞製剤、ペプチド、設計タンパク質など",
+   got:"新しい薬の形", lack:"最初に狙う病気",
+   first:"応用が広いことが弱点になる",
+   say:"どれにでも使えるというのは、どれも本気でやっていないのと同じに聞こえます" },
+ { id:"biomarker", i:"🔖", c:sky, n:"効く人・悪くなる人を見分ける指標を見つけた",
+   eg:"治療反応性を予測する分子、病気の進行を映す血液マーカーなど",
+   got:"患者を分ける目印", lack:"分けたあとに渡す薬",
+   first:"分けられる。渡す薬がない",
+   say:"分けた先に何を出すんですか。それとも検査として売るんですか" },
+ { id:"tech", i:"🛰️", c:mint, n:"今まで見えなかったものを測る・見る技術を作った",
+   eg:"新しいイメージング、1細胞解析、生体内で測る手法など",
+   got:"見る力", lack:"それで何を決めるのか",
+   first:"見える。だから何が変わるのか",
+   say:"それが見えると、誰のどんな意思決定が変わりますか" },
+ { id:"systems", i:"🦠", c:sun, n:"腸内細菌・代謝・免疫など、体の仕組みの側で発見した",
+   eg:"特定の菌と病態の関係、代謝物の作用、免疫細胞の新しい挙動など",
+   got:"体の仕組みの新しい理解", lack:"介入できる一点",
+   first:"関係は見えた。介入点がない",
+   say:"相関は分かりました。どこを押せば変わるんですか" },
+ { id:"compute", i:"🧠", c:rose, n:"計算やAIで予測する方法を作った",
+   eg:"構造予測、標的探索、化合物設計、患者層別化のモデルなど",
+   got:"予測する力", lack:"実験で当たった実績",
+   first:"予測できる。当たった証拠がない",
+   say:"その予測、ウェットで何件検証して、何件当たりましたか" }
+];
+const D = () => DISC.find(d=>d.id===S.disc) || DISC[0];
+
+/* ===================== シナリオ ===================== */
+const SCENES = [
+
+{ id:"start", art:"lab", tag:"はじまり", title:"世界で最初に、それを見た",
+  text:()=>`何年も追いかけてきたテーマで、はっきりした結果が出ました。再現も取れています。<b>${D().n}</b>。
+    <br><br>一流誌に通る手応えがある。そして同時に、こう思ってしまいました。<b>これ、薬になるのでは？</b>`,
+  choices:[
+    { t:"すぐ論文を投稿する", sub:"研究者としては当然の一手", fx:{data:1}, kind:"soso", flag:"paperFirst",
+      res:"論文は高く評価されました。ただ、あとで知ることになります。公表したあとだと、その内容では特許が取りにくくなる場合があること。",
+      memo:"<j data-k='ip'>特許</j>が認められる条件のひとつが<j data-k='novelty'>新規性</j>、つまりまだ世の中に公表されていないことです。学会発表も公表にあたります。論文が先か出願が先かは状況によるので、自分だけで決めずに大学の窓口に相談するのが安全です。" },
+    { t:"大学の窓口に相談する", sub:"産学連携本部やTLOと呼ばれる部署", fx:{team:1}, kind:"good", flag:"tlo",
+      res:"面談を申し込みました。担当者は知財の専門家で、同じような相談を何件も受けている人でした。話が早い。",
+      memo:"大学には<j data-k='tlo'>産学連携本部やTLO</j>という窓口があります。研究成果に事業化の価値があるかを最初に判断してくれる場所で、特許の出願費用を大学が持ってくれることもあります。薬にしたいと思ったら、まずここです。" },
+    { t:"知り合いの製薬企業の人にメールする", sub:"現場の感触を聞いてみる", fx:{team:1,data:-1}, kind:"soso", flag:"earlyMail",
+      res:"丁寧な返事が来ました。ただ最後に一行。「secrecy agreementを結ぶ前なので、未公表データは送らないでください」。知らずに送るところでした。",
+      memo:"企業と未公表の話をするときは、秘密保持契約を結んでからにします。契約なしで送ったデータは、あとで権利の話になったときに自分の立場を弱くすることがあります。ここも大学の窓口が間に入ってくれる場面です。" }
+  ] },
+
+{ id:"pharmaEye", art:"pharma", tag:"相手の目線", title:"製薬企業の人は、まずどこを見ているか",
+  who:"企業の創薬研究者", say:"面白い論文でした。いくつか確認させてください",
+  text:`創薬の研究のほとんどは、アカデミアの実験の上に成り立っています。それでも企業の人が論文を読むとき、見ている場所は研究者とは少し違います。
+    <br><br>あなたの論文を読んだ相手が、最初に確かめたのはどこだと思いますか。`,
+  choices:[
+    { t:"結論のインパクトと、掲載誌", sub:"どれだけすごい発見か", fx:{data:0}, kind:"soso", flag:"guessJournal",
+      res:"もちろん読んでいます。ただ、そこは入口でした。相手が時間をかけて見ていたのは、もっと地味なところです。" },
+    { t:"同じ実験をやったら同じ結果が出そうか", sub:"再現できるかどうか", fx:{data:1}, kind:"good", flag:"guessRepro",
+      res:"正解でした。相手が真っ先に見ていたのは、その現象が何回やっても出るのか、という一点でした。差がどれくらい大きいか（<j data-k='effect'>効果の大きさ</j>）も、同じくらい見られています。" },
+    { t:"特許が出ているかどうか", sub:"権利の状況", fx:{data:0}, kind:"soso", flag:"guessIP",
+      res:"それも見ています。ただ順番としては後ろでした。権利があっても、再現しないデータには意味がないからです。" }
+  ],
+  memo:"<j data-k='repro'>再現性</j>は創薬でいちばん重視される性質のひとつです。1回うまくいった現象より、何度やっても同じように出る現象のほうが価値がある。開発には何年もかかるので、途中で崩れる土台には乗れないという、ごく実務的な理由です。",
+  pharma:`実際に見られているのは、たとえばこういう点です。<br><br>
+    ・<j data-k='n'>n数</j>がいくつで、それは独立した実験なのか、同じ日の同じプレートなのか<br>
+    ・<j data-k='window'>アッセイウィンドウ</j>、つまり効いた群と効かない群の差がどれくらいあるのか<br>
+    ・どの統計手法を使ったのか、<j data-k='pval'>多重比較</j>の補正はされているのか<br>
+    ・<j data-k='control'>ポジコン・ネガコン</j>が置かれているか、測定は<j data-k='blind'>ブラインド</j>か<br>
+    ・<j data-k='image'>代表画像</j>ばかりでなく、ちゃんと定量されているか<br>
+    ・<j data-k='mm'>M&amp;M</j>が、他のラボで再現できる細かさで書かれているか` },
+
+{ id:"reproCheck", art:"magnify", tag:"相手の目線", title:"向こうは、もう試していた",
+  who:"企業の創薬研究者", say:"実は、うちのラボで何本か追試してみました",
+  text:`面談の途中で、さらっとこう言われました。論文が出ていれば、声をかける前に自社のラボで一部を再現してみる。そういうことが多いのだそうです。
+    <br><br>そして一言。<b>「2つは出ました。1つは、条件が足りなくて再現できませんでした」</b>`,
+  choices:[
+    { t:"出なかった条件を一緒に詰める", sub:"何が違ったのかを突き合わせる", fx:{data:1,team:1}, kind:"good", flag:"detail",
+      res:"プロトコルを並べて比較したところ、細胞の継代数と血清のロットで<j data-k='assay'>評価系</j>の挙動が変わることがわかりました。論文には書いていなかった条件です。むしろ信用が上がりました。",
+      memo:"再現しなかったという事実そのものより、原因を一緒に突き止められるかどうかが見られています。自分でも気づいていなかった条件依存性が見つかることも多く、それは論文にも次の実験にも効いてきます。" },
+    { t:"うちの手ならちゃんと出る、と説明する", sub:"技術的な難しさを伝える", fx:{data:-1}, kind:"bad", flag:"onlyUs",
+      res:"相手は黙ってうなずきました。ただ、心の中ではこう考えています。「この人のラボでしか出ないなら、うちでは開発できない」。",
+      memo:"自分のラボでしか出ない現象は、科学としては本物でも、開発には乗せにくい。何百人もの手を渡っていくのが開発だからです。誰の手でも出るようにすること自体が、価値を上げる作業になります。" },
+    { t:"詳しいプロトコルと生データを全部渡す", sub:"条件も失敗例もまとめて", fx:{data:1,team:1}, kind:"good", flag:"openData",
+      res:"うまくいかなかった条件のリストも一緒に渡しました。相手の反応が明らかに変わります。「ここまで出してもらえると、社内で話を通しやすい」。",
+      memo:"企業の担当者は、社内で上長や審査を通すために説明をしています。<j data-k='dd'>デューデリジェンス</j>でネガティブな結果が後から出てくると、データの中身より「報告されなかった」という事実のほうが重く評価されます。最初から出すほうが、結局は速い。" }
+  ] },
+
+{ id:"gap", art:"crossroad", tag:"自分の弱点", title:()=>D().first,
+  who:"相手", say:()=>D().say,
+  text:()=>`いま手元にあるのは、<b>${D().got}</b>です。そして足りないのは、<b>${D().lack}</b>。
+    <br><br>発見の種類によって、最初にぶつかる壁は違います。あなたの場合は、ここでした。`,
+  choices:[
+    { t:"足りないものを、自分のラボで取りに行く", sub:"時間はかかるが、全部自分たちのものになる", fx:{data:1,money:-1}, kind:"soso", flag:"inhouseFirst",
+      res:"手は動き始めました。ただ、研究室の本来のテーマと競合します。学生の研究時間を使うのか、という問題も出てきました。",
+      memo:"自分のラボでやると権利関係は単純ですが、人手と時間が研究室の本業とぶつかります。大学の研究費で買った装置や試薬をどう使うかにもルールがあるので、先に確認しておくと後が楽です。" },
+    { t:"持っている人と組む", sub:"足りない部分を相手に埋めてもらう", fx:{team:2}, kind:"good", flag:"partner",
+      res:"それを持っているグループに連絡を取りました。先方も興味を示しています。製造まで必要になれば<j data-k='cdmo'>CDMO</j>を探すことになります。ただ、共同研究の契約では成果の権利をどう分けるかを先に決める必要があります。",
+      memo:"足りないものを持っている相手と組むのは、いちばん速い道です。ただし共同研究から生まれた発明は共有になることが多く、共有<j data-k='ip'>特許</j>は片方だけでは自由に使えません。契約の形は窓口と相談して決めます。" },
+    { t:"足りないまま、先に資金を取りに行く", sub:"お金があれば埋められる", fx:{money:1,data:-1}, kind:"soso", flag:"moneyFirst",
+      res:"申請書を書き始めました。ただ、どの様式にも「何をどこまで示すか」を書く欄があります。足りないものが決まっていないと、そこが埋まりません。",
+      memo:"資金を先に取る発想は間違いではありませんが、何に使うかが決まっていないと申請書が書けません。先に「何が足りないか」を一文で言えるようにしておくと、申請書もピッチも一気に書きやすくなります。" }
+  ] },
+
+{ id:"disease", art:"map", tag:"決める", title:"どの病気を、最初に狙うか",
+  text:`専門の医師に話を聞きに行きました。自分が当然だと思っていた前提が、臨床ではそうでもないことがわかります。
+    <br><br>すでに良い薬がある領域なのか、まだ何もない領域なのか。それによって、求められるデータの高さがまるで違いました。効く人をあらかじめ選べる<j data-k='biomarker'>バイオマーカー</j>があるかどうかも、そこで聞かれます。`,
+  choices:[
+    { t:"患者数の多い病気を狙う", sub:"市場が大きいほうがいいはず", fx:{data:-1,money:1}, kind:"soso", flag:"bigMarket",
+      res:"確かに市場は大きい。ただ、そこには既存の治療があり、大手が何社も走っていました。比較の相手が強すぎます。",
+      memo:"市場の大きさは魅力ですが、既存治療が強い領域では「それより良い」を示すハードルが跳ね上がります。<j data-k='unmet'>アンメットニーズ</j>は患者数だけでなく、今ある治療で足りているかどうかで測ります。" },
+    { t:"治療法がまったくない病気を狙う", sub:"患者数は少ないが、他に手段がない", fx:{data:1,team:1}, kind:"good", flag:"unmet",
+      res:"患者数は多くありません。それでも、医師も患者会も強く必要としている領域でした。比較すべき既存治療がないぶん、示すべきことが明確になります。",
+      memo:"患者数が少なくても、治療法がない病気なら価値は高く評価されます。希少疾病用医薬品の指定を受けると、試験の規模や審査で優遇される制度もあります。小さく速く示して、そこから広げるのは王道の戦略です。" },
+    { t:"自分の研究に一番近い病気にする", sub:"いちばんよく知っている領域", fx:{data:1,money:-1}, kind:"soso", flag:"nearest",
+      res:"データはすぐ出せます。ただ、なぜその病気なのかと聞かれたとき、「自分が詳しいから」以外の理由を用意しておく必要がありました。",
+      memo:"研究の蓄積がある領域は強みですが、選んだ理由を医療側の言葉で説明できるかは別の話です。その病気の患者さんが今どう困っているのかを、数字と医師の言葉で言えるようにしておきます。" }
+  ] },
+
+{ id:"tpp", art:"paper", tag:"決める", title:"どんな薬にしたいかを、一枚に書く",
+  text:`相手から言われました。「設計図をください」。対象の病気、投与の方法、どの<j data-k='modality'>モダリティ</j>で作るのか、どういう仕組みで効くのか（<j data-k='moa'>MoA</j>）、どれくらい効けば意味があるのか、どこまでの副作用なら許されるのか、既存の治療と何が違うのか。
+    <br><br>書き始めてみると、埋まらない欄がいくつもありました。`,
+  choices:[
+    { t:"埋まらない欄は空けたまま出す", sub:"分からないことは分からないと示す", fx:{team:1}, kind:"good", flag:"honestTpp",
+      res:"空欄のまま出したところ、相手はむしろ身を乗り出しました。「ここを埋めるのが、次の1年の仕事ですね」。空欄が、そのまま計画になりました。",
+      memo:"<j data-k='tpp'>TPP</j>は一度書いて終わりの書類ではありません。結果が出るたびに改訂していくもので、最後は添付文書になっていきます。空欄があること自体は問題ではなく、どこが空欄かを分かっていないことが問題です。" },
+    { t:"想定で埋めて、形を整えてから出す", sub:"空欄だらけでは格好がつかない", fx:{data:-1}, kind:"bad", flag:"fakeTpp",
+      res:"きれいな資料になりました。ただ細部を質問されたとき、根拠のない数字がいくつも混じっていることが露見します。資料全体の信用が落ちました。",
+      memo:"分からないことを埋めてしまうより、分からないと書いてあるほうが信用されます。相手は完成度ではなく、どこまで分かっていてどこから分かっていないかの線引きを見ています。" },
+    { t:"まず医師と一緒に書く", sub:"使う側の基準を先に入れる", fx:{data:1,team:1}, kind:"good", flag:"withDoc",
+      res:"医師に聞いて驚きました。自分が目標にしていた改善の幅では、臨床的には「変わらない」と判断される水準だったのです。危ないところでした。",
+      memo:"どれくらい効けば医療が変わるのかは、研究者の感覚と臨床の基準でずれることがあります。<j data-k='tpp'>TPP</j>の有効性の欄は、使う側の基準で書くのが原則です。" }
+  ] },
+
+{ id:"gapfund", art:"money", tag:"お金", title:"最初のお金を、どこから取るか",
+  text:`何をするかは決まりました。次はお金です。研究費とは別に、事業化のための資金という枠があることを、このとき初めて知りました。<j data-k='grant'>返さなくていいお金</j>と、株を渡して受け取るお金があります。`,
+  choices:[
+    { t:"ギャップファンドに応募する", sub:"研究者だけで応募できる最初の枠", fx:{money:2,team:1}, kind:"good", flag:"gap1",
+      res:"所属大学が参加しているプラットフォームの枠に応募しました。研究代表者だけで出せます。支払いは多くが<j data-k='seisan'>精算払い</j>で、先に自分たちで払って後から戻る形です。審査は厳しいものの、ここで採択されたという実績が次に効いてきます。",
+      memo:"<j data-k='gap'>ギャップファンド</j>のステップ1は最長1年、支援期間の総額で原則500万円（特別枠1,000万円）。<j data-k='vc'>VC</j>との共同申請が要らないので、研究者単独で踏み出せる数少ない入口です。<j data-k='jst'>JST</j>の枠組みで全国9つのプラットフォームが運営しています。" },
+    { t:"いきなり大型の助成金を狙う", sub:"どうせやるなら大きいほうがいい", fx:{money:-1,data:-1}, kind:"bad", flag:"tooBig",
+      res:"書き始めてすぐ止まりました。数億円規模の枠は、<j data-k='vc'>VC</j>などの事業化推進機関との共同申請が必須です。組む相手がいないと、応募すらできません。",
+      memo:"金額が上がるほど、研究者単独では出せなくなります。ギャップファンドのステップ2やD-Globalは、VC等との共同申請が前提。つまり小さい枠を回しているうちにVCを見つけておく、というのが現実的な順序になります。" },
+    { t:"企業との共同研究で資金を得る", sub:"一番早くお金が入る", fx:{money:1,data:1,team:-1}, kind:"soso", flag:"coResearch",
+      res:"資金は入りました。ただし契約で、その領域での他社との交渉が一定期間できなくなります。発明そのものは<j data-k='shokumu'>職務発明</j>として大学に帰属するので、条件は大学と企業の間で決まります。早さと引き換えに、選択肢が狭まりました。",
+      memo:"共同研究費は早く入る資金ですが、独占交渉権や成果の帰属が条件に入ることがあります。契約書の権利の条項は、必ず大学の窓口と一緒に読みます。" }
+  ] },
+
+{ id:"vcFind", art:"meeting", tag:"なかま", title:"組んでくれるVCを、どうやって見つけるか",
+  text:`大きな枠に出すには、組んでくれる<j data-k='vc'>VC</j>が要ります。でも知り合いがいません。どこから手をつければいいのでしょうか。`,
+  choices:[
+    { t:"採択課題の一覧から探す", sub:"公開されている名前を辿る", fx:{team:2}, kind:"good", flag:"smartSearch",
+      res:"過去の採択課題の一覧を見ると、事業化推進機関としてVCの名前が載っています。同じ名前が何度も出てくる事務所がありました。そこに連絡を取ります。",
+      memo:"どの<j data-k='vc'>VC</j>が創薬で実績を出しているかは、公募事業の採択課題一覧から辿れます。公開情報です。同じ名前が繰り返し出てくる事務所は、申請の作法を知っていて採択率も高い傾向があります。" },
+    { t:"有名なVCに片っ端から連絡する", sub:"数を打てば当たる", fx:{team:-1}, kind:"bad", flag:"spray",
+      res:"ほとんど返事が来ませんでした。返ってきた数件も、創薬をやっていない事務所でした。",
+      memo:"VCには専門領域があります。<j data-k='vc'>創薬に投資していない事務所</j>にいくら送っても判断できません。まず創薬に張っている事務所を絞り込むところからです。" },
+    { t:"支援の中身で選ぶ", sub:"お金以外に何をしてくれるか", fx:{team:2,data:1}, kind:"good", flag:"pickRight",
+      res:"事務所ごとに方針も人手もまったく違いました。研究員を派遣してくれるところ、申請書を一緒に書いてくれるところ、資金だけを入れるところ。製薬企業が持つ<j data-k='cvc'>CVC</j>という選択肢もあります。自分に足りないものを埋めてくれる相手を選びます。",
+      memo:"同じVCでも、できることは事務所の方針と人手で決まります。創薬の担当者が常駐していれば申請書を一緒に書けるし、いなければ「準備してもらえればプレゼンはします」という形になる。どちらが良いかは、自分が何を自分でやりたいかによります。" }
+  ] },
+
+{ id:"inhouse", art:"team", tag:"進め方", title:"自分のラボでやるか、外に出すか",
+  who:"VCの担当者", say:"この試験、どちらでやる前提で予算を組みますか",
+  text:`資金の使い道を決める段になりました。自分のラボでやれば安い。外に出せば高いが、手順が標準化されていて、他人が見ても信用されるデータになります。`,
+  choices:[
+    { t:"項目ごとに、先に相談して決める", sub:"どちらが速くて確実かを一つずつ", fx:{data:2,team:1}, kind:"good", flag:"agreed",
+      res:"全部の試験を表にして、一つずつ内製か外注かを決めました。時間がかかりましたが、あとで揉めるところが全部なくなります。",
+      memo:"内製と外注に一般的な正解はありません。項目ごとに、どちらが成功確度が高く、余裕のある工程で揃うかを事前に擦り合わせることが重要です。ここを曖昧にしたまま進むと、同じ予算を違う使い方で想定していた、という事故が起きます。" },
+    { t:"全部ラボに入れる予算の取り方をする", sub:"研究室にお金が落ちるほうがいい", fx:{data:-1,money:1}, kind:"bad", flag:"allIn",
+      res:"あとで問題になりました。VCは外注を前提に工程を組んでいたのに、外注費が取られていません。工程表が最初から成立していませんでした。",
+      memo:"これはかなり多い事故です。先生はラボに一括で入る形の助成金を選び、外注費を取っていない。起業後も、投資された資金が同じラボの別テーマに流れてしまうことがあります。お金の置き場所の話は、早い段階で言葉にしておきます。" },
+    { t:"信頼性が問われる試験だけ外に出す", sub:"安全性や薬物動態はプロに", fx:{data:1,money:-1}, kind:"good", flag:"cro",
+      res:"安全性と薬物動態は<j data-k='cro'>CRO</j>に出しました。これは<j data-k='nonclin'>非臨床試験</j>と呼ばれる段階で、ここを通らないと<j data-k='clin'>治験</j>には進めません。費用は上がりましたが、第三者のデータになったことで、相手の見る目が変わりました。",
+      memo:"安全性の試験は、<j data-k='glp'>GLP</j>という基準に対応した施設で行ったものでないと治験の申請に使えません。大学で取ったデータがどれだけ質が高くても、そこはやり直しになります。最初から<j data-k='cro'>CRO</j>に出すほうが、結果的に速いことが多い。" }
+  ] },
+
+{ id:"hearing", art:"meeting", tag:"審査", title:"審査のヒアリングで、刺された",
+  who:"審査員", say:"その評価系で見ている現象は、患者さんの体の中で起きていることと同じですか",
+  text:`答えに詰まりました。当然の前提にしていたところに、説明されていない飛躍があります。言われてみれば、そこを埋めるデータは誰も取っていません。`,
+  choices:[
+    { t:"正直に、まだ埋めていないと答える", sub:"そして埋め方を提案する", fx:{data:1,team:1}, kind:"good", flag:"honest",
+      res:"「そこは今ありません。患者検体で確認する計画を半年で組みます」。審査員がうなずきました。あとで、この論点は<j data-k='pmda'>PMDA</j>の無料相談でも聞けると教わりました。その場で答えられなかったことより、設計できることのほうが見られていました。",
+      memo:"審査の場は試験ではなく議論です。知らないことを知らないと言い、埋め方を提案できるかが見られています。ここで出た指摘は、たいていそのまま次の計画書のいちばん良い部分になります。" },
+    { t:"関連するデータで押し切る", sub:"持っているもので答える", fx:{data:-1}, kind:"bad", flag:"pushed",
+      res:"その場は流れました。ただ講評に一行残ります。「質問に正対していない」。技術の評価ではないところで点を落としました。",
+      memo:"質問に正対していない、という講評は意外とよく書かれます。技術の問題ではなく、議論ができる相手かどうかの評価です。答えられない質問に当たったときのほうが、むしろ印象を作ります。" }
+  ] },
+
+{ id:"team", art:"team", tag:"なかま", title:"一人では、もう回らない",
+  text:`採択されました。おめでとうございます。そして翌週から、事務手続きと報告書と見積もりの日々が始まります。
+    <br><br>気づけば、自分で実験する時間がほとんどありません。`,
+  choices:[
+    { t:"助成金で人を迎える", sub:"事務と調整を担当してもらう", fx:{team:2,money:-1}, kind:"good", flag:"crew",
+      res:"研究費で雇える枠を使って、プロジェクトマネジメントができる人を迎えました。自分の時間が戻ってきます。",
+      memo:"多くの助成金には人件費の枠があります。研究者が事務と調整を抱え込むのは、いちばん高い人件費を一番安い仕事に使っている状態です。採択されたら、まず人を増やせないかを考えます。" },
+    { t:"全部自分で抱える", sub:"人に任せるほうが時間がかかる", fx:{data:-1,team:-1}, kind:"bad", flag:"burnout",
+      res:"3か月後、研究が止まっていることに気づきました。書類は全部期限内に出しています。ただ、出すべきデータが出ていません。",
+      memo:"採択されるほど事務が増える、というのが公的資金の構造です。報告、証憑、見積もり、変更申請。それ自体は必要な仕事ですが、研究代表者がやる仕事ではありません。" },
+    { t:"VCから研究員を派遣してもらう", sub:"そういう支援をする事務所もある", fx:{team:2,data:1}, kind:"good", flag:"dispatch",
+      res:"派遣された研究員は製薬企業の出身で、非臨床の進め方を知っていました。こちらが何年もかけて覚えることを、最初から知っている。進みが明らかに速くなります。",
+      memo:"研究員の派遣まで行う<j data-k='vc'>VC</j>があります。製薬企業の経験者が入ると、どの試験をどの順で組むかという判断が一気に変わります。VCを選ぶときに、お金以外に何をしてくれるかを見る価値はここにあります。" }
+  ] },
+
+{ id:"final", art:"crossroad", tag:"選ぶ", final:true, title:"ここから、どの道を行くか",
+  text:`いちばん大事な実験（<j data-k='poc'>PoC</j>）が通りました。ここから先には、いくつもの道があります。会社を作ることだけが成功ではありません。手元の資金が何か月もつか（<j data-k='burn'>バーンレート</j>）を見ながら、次を決めます。`,
+  choices:[
+    { t:"会社を作る", sub:"自分たちで臨床まで持っていく", ending:"startup" },
+    { t:"製薬企業に渡す", sub:"企業のスピードで進めてもらう", ending:"license" },
+    { t:"もっと大きな研究費に挑む", sub:"研究として続けながら厚くする", ending:"grant" },
+    { t:"事業化は仲間に任せ、自分は研究に戻る", sub:"科学の責任者として残る", ending:"handover" }
+  ] }
+];
+
+/* ===================== エンディング ===================== */
+const ENDINGS = {
+  startup:{ c:[grape,rose], title:"会社ができた",
+    text:"自分たちで臨床まで持っていく道を選びました。資金は自分で取り続けることになりますが、どう進めるかは自分たちで決められます。ここからが本番です。",
+    memo:"起業はゴールではなくスタートです。会社になると人件費と固定費が一段上がるので、設立の時期は次のお金の目処と一緒に決めます。株を発行して資金を入れるたびに持分は薄まりますが（<j data-k='equity'>希薄化</j>）、減ること自体は悪いことではありません。認定された<j data-k='vc'>VC</j>から出資を受けていると、その出資額に対して国が2倍を上限に上乗せする枠にも手が届きます。" },
+  license:{ c:[sky,mint], title:"製薬企業に託した",
+    text:"知財を企業に渡し、開発はあちらの体制で走ることになりました。自分の手からは離れますが、患者さんに届くまでの時間は、おそらく最短です。",
+    memo:"<j data-k='license'>導出</j>は撤退ではありません。届くまでの時間で見ると、むしろ最短の選択になることがよくあります。渡すときに見られるのは技術の良さだけでなく、相手が社内で説明できる形にデータが揃っているかどうかです。" },
+  grant:{ c:[sun,rose], title:"研究として、続ける",
+    text:"会社にするのは急がず、より大きな研究費で開発を進める道を選びました。株を手放さずに進められるうちは、慌てて会社にする理由はありません。",
+    memo:"<j data-k='grant'>助成金</j>は返さなくていいし、株も渡さなくていい資金です。日本はこの種の支援がかなり手厚いので、意識して繋いでいくと、最後に自分たちの手元に残るものが変わります。" },
+  handover:{ c:[mint,sky], title:"任せて、研究に戻った",
+    text:"事業化の意思決定を仲間に預け、自分は科学の責任者として関わる形にしました。研究室に戻れています。プロジェクトは、自分がいなくても進みます。",
+    memo:"研究者が事業化に全部の時間を使う必要はありません。経営は創薬の経験者に任せて、自分は科学顧問として関わる形も選べます。任せられる相手がいる状態を作ることが、いちばん難しくて、いちばん価値のあるチーム作りです。" }
+};
+
+/* ===================== 状態 ===================== */
+let S = { data:1, team:0, money:2, i:0, flags:{}, disc:null, seen:{} };
+const MAXP = 6;
+const clamp = v => Math.max(0, Math.min(MAXP, v));
+const val = v => typeof v === "function" ? v() : v;
+
+/* ===================== 用語ポップアップ ===================== */
+function openWord(k){
+  const w = WORDS[k]; if(!w) return;
+  const isNew = !S.seen[k];
+  S.seen[k] = true; updateWordChip();
+  const sc = el(`<div class="scrim"><div class="sheet">
+    <div class="sheet-hd"><div class="bubble">${w.i}</div>
+      <div><h3>${w.n}</h3><div class="en">${w.en}${isNew?' ・ はじめて見る用語':''}</div></div></div>
+    <div class="sheet-bd"><p>${w.b}</p></div>
+    <div class="sheet-ft"><button class="btn ghost" type="button">とじる</button></div>
+  </div></div>`);
+  const close = ()=>sc.remove();
+  sc.querySelector("button").addEventListener("click", close);
+  sc.addEventListener("click", e=>{ if(e.target===sc) close(); });
+  wireWords(sc);
+  document.body.appendChild(sc);
+}
+function openGlossary(){
+  const got = Object.keys(S.seen).length;
+  const sc = el(`<div class="scrim"><div class="sheet">
+    <div class="sheet-hd"><div class="bubble">📖</div>
+      <div><h3>用語集</h3><div class="en">${got} / ${WORD_ORDER.length} 個ひらいた</div></div></div>
+    <div class="glos" id="glosList"></div>
+    <div class="sheet-ft"><button class="btn ghost" type="button">とじる</button></div>
+  </div></div>`);
+  const list = sc.querySelector("#glosList");
+  WORD_ORDER.forEach(k=>{
+    const w = WORDS[k], seen = !!S.seen[k];
+    const b = el(`<button class="gl ${seen?'':'locked'}" type="button">
+      <span class="gi">${w.i}</span>
+      <span><span class="gn">${w.n}</span><br><span class="gs">${w.s}</span></span></button>`);
+    b.addEventListener("click", ()=>{ sc.remove(); openWord(k); });
+    list.appendChild(b);
+  });
+  const close = ()=>sc.remove();
+  sc.querySelector(".sheet-ft button").addEventListener("click", close);
+  sc.addEventListener("click", e=>{ if(e.target===sc) close(); });
+  document.body.appendChild(sc);
+}
+function wireWords(root){
+  root.querySelectorAll("j[data-k]").forEach(n=>{
+    if(n.dataset.wired) return; n.dataset.wired = "1";
+    if(S.seen[n.dataset.k]) n.classList.add("seen");
+    n.addEventListener("click", e=>{ e.stopPropagation(); openWord(n.dataset.k); });
+  });
+}
+function updateWordChip(){
+  const n = $("wordN"); if(n) n.textContent = Object.keys(S.seen).length;
+}
+
+/* ===================== 描画 ===================== */
+function bars(flash){
+  const defs = [["data","データ","c1"],["team","なかま","c2"],["money","おかね","c3"]];
+  $("bars").innerHTML = defs.map(([k,label,c])=>`
+    <div class="bar ${c} ${flash&&flash[k]?'pop':''}">
+      <div class="bl">${ICON[k]}${label}</div>
+      <div class="bv">${Array.from({length:MAXP},(_,i)=>`<i class="${i<S[k]?'on':''}"></i>`).join("")}</div>
+    </div>`).join("");
+}
+function dots(){
+  $("dots").innerHTML = SCENES.map((_,i)=>`<span class="dot ${i<S.i?'on':''} ${i===S.i?'now':''}"></span>`).join("");
+}
+function paint(html){
+  $("wrap").innerHTML = ""; const c = el(html); $("wrap").appendChild(c);
+  wireWords(c); window.scrollTo({top:0, behavior:"smooth"}); return c;
+}
+
+/* ===================== タイトル ===================== */
+function title(){
+  $("top").hidden = true;
+  const c = paint(`<div>
+    <div class="hero">
+      <div class="kicker">INTRO ・ 入門編</div>
+      <h1>アカデミア発シーズの<br>事業化編</h1>
+      <div class="sub">自分の発見を、薬にしたくなったときの最初の地図</div>
+      <div class="pills"><span class="pill">10分くらい</span><span class="pill">専門用語はタップで解説</span><span class="pill">製薬企業側の目線つき</span></div>
+    </div>
+    <div class="scene">${ART.lab}
+      <div class="scene-bd">
+        <h2>創薬は、アカデミアの実験の上に成り立っている</h2>
+        <p>新しい薬のきっかけは、ほとんどが大学の研究室から生まれます。それでも、研究の成果が薬になるまでの道のりは、論文を書く道のりとはまるで違う言葉で動いています。</p>
+        <p>このゲームでは、あなたの発見を選ぶところから始めて、製薬企業や投資家が何を見ているのかを、ひととおり体験します。知らない言葉が出てきたら、<j data-k='seeds'>こんなふうに点線がついた言葉</j>をタップしてください。</p>
+      </div>
+      <div class="choices"><button class="btn" id="go" type="button">はじめる</button></div>
+    </div></div>`);
+  c.querySelector("#go").addEventListener("click", pickDisc);
+}
+
+/* ===================== 発見を選ぶ ===================== */
+function pickDisc(){
+  $("top").hidden = true;
+  const c = paint(`<div class="scene">${ART.paper}
+    <div class="scene-bd">
+      <span class="tagline">STEP 0</span>
+      <h2>あなたの発見は、どれに近いですか</h2>
+      <p>創薬のきっかけになる発見にはいろいろな形があります。ぴったり同じでなくて構いません。<b>いちばん近いもの</b>を選んでください。ここから先の話が変わります。</p>
+    </div>
+    <div class="choices" id="discList"></div></div>`);
+  const box = c.querySelector("#discList");
+  DISC.forEach((d,i)=>{
+    const b = el(`<button class="ch" type="button">
+      <span class="n" style="background:${d.c}">${d.i}</span>
+      <span>${d.n}<small>${d.eg}</small></span></button>`);
+    b.addEventListener("click", ()=>{ S.disc = d.id; S.i = 0; renderScene(); });
+    box.appendChild(b);
+  });
+}
+
+/* ===================== シーン ===================== */
+function renderScene(){
+  const sc = SCENES[S.i];
+  $("top").hidden = false; dots(); bars(); updateWordChip();
+  const c = paint(`<div class="scene">${ART[sc.art]}
+    <div class="scene-bd">
+      ${sc.tag?`<span class="tagline">${sc.tag}</span>`:""}
+      <h2>${val(sc.title)}</h2>
+      ${sc.say?`<div class="say"><span class="who">${val(sc.who)||""}</span>「${val(sc.say)}」</div>`:""}
+      <p>${val(sc.text)}</p>
+    </div>
+    <div class="choices" id="chBox"></div></div>`);
+  const box = c.querySelector("#chBox");
+  val(sc.choices).forEach((ch,i)=>{
+    const b = el(`<button class="ch" type="button"><span class="n">${i+1}</span>
+      <span>${ch.t}${ch.sub?`<small>${ch.sub}</small>`:""}</span></button>`);
+    b.addEventListener("click", ()=>pick(ch));
+    box.appendChild(b);
+  });
+}
+
+function pick(ch){
+  const sc = SCENES[S.i];
+  if(sc.final){ S.ending = ch.ending; return showEnding(); }
+  const before = {data:S.data, team:S.team, money:S.money};
+  if(ch.fx) for(const k in ch.fx) S[k] = clamp(S[k] + ch.fx[k]);
+  if(ch.flag) S.flags[ch.flag] = true;
+  const flash = {data:S.data!==before.data, team:S.team!==before.team, money:S.money!==before.money};
+  bars(flash);
+  const deltas = ["data","team","money"].map(k=>{
+    const d = S[k]-before[k]; if(!d) return "";
+    const label = {data:"データ",team:"なかま",money:"おかね"}[k];
+    return `<span class="delta ${d>0?'up':'down'}">${label} ${d>0?'+':''}${d}</span>`;
+  }).join("");
+  const memo = ch.memo || sc.memo;
+  const c = paint(`<div class="scene">${ART[sc.art]}
+    <div class="scene-bd"><h2>${val(sc.title)}</h2></div>
+    <div class="res">
+      <div class="res-box ${ch.kind||'soso'}">${ch.res}${deltas?`<div class="deltas">${deltas}</div>`:""}</div>
+      ${memo?`<div class="memo"><b>${ICON.bulb}ひとくちメモ</b>${memo}</div>`:""}
+      ${sc.pharma?`<div class="pharma"><b>${ICON.eye}製薬企業は、ここを見ています</b>${sc.pharma}</div>`:""}
+      <button class="btn" id="next" type="button">つぎへ</button>
+    </div></div>`);
+  c.querySelector("#next").addEventListener("click", ()=>{
+    S.i++; if(S.i >= SCENES.length) showEnding(); else renderScene();
+  });
+}
+
+/* ===================== 結末 ===================== */
+const LESSONS = [
+  ["tlo","薬にしたいと思ったら、まず大学の産学連携の窓口に相談する"],
+  ["paperFirst","論文を出す前に、特許をどうするかを相談しておく"],
+  ["earlyMail","企業と未公表の話をするときは、秘密保持契約を先に結ぶ"],
+  ["guessRepro","製薬企業が最初に見るのは、インパクトではなく再現性"],
+  ["guessJournal","掲載誌の格と、開発に乗るかどうかは別の話"],
+  ["detail","再現しなかった条件は、隠さず一緒に詰めると信用になる"],
+  ["openData","うまくいかなかったデータも渡すほうが、結局は速い"],
+  ["onlyUs","自分のラボでしか出ない現象は、開発に乗せにくい"],
+  ["partner","足りないものは、持っている人と組んで埋める"],
+  ["unmet","患者数より、今ある治療で足りているかどうかで見る"],
+  ["bigMarket","大きい市場ほど、比較すべき既存治療が強い"],
+  ["honestTpp","設計図の空欄は、そのまま次の計画になる"],
+  ["withDoc","どれくらい効けば意味があるかは、臨床の基準で決める"],
+  ["fakeTpp","分からないことを想定で埋めると、資料全体の信用が落ちる"],
+  ["gap1","最初の資金はギャップファンド。研究者だけで応募できる"],
+  ["tooBig","大型の枠はVCとの共同申請が必須。先に組む相手を見つける"],
+  ["smartSearch","VCは、採択課題の一覧に載っている名前から探せる"],
+  ["pickRight","VCはお金以外に何をしてくれるかで選ぶ"],
+  ["agreed","内製か外注かは、項目ごとに先に擦り合わせて決める"],
+  ["allIn","全部ラボに入れる予算の取り方は、工程表と食い違う"],
+  ["cro","安全性の試験はGLP対応の施設でないと治験に使えない"],
+  ["honest","審査では、答えられないことより埋め方を示せるかが見られる"],
+  ["crew","事務と調整は、助成金の人件費枠で人を迎えて任せる"],
+  ["burnout","研究代表者が事務を抱えると、研究が止まる"],
+  ["dispatch","研究員を派遣してくれるVCもある"]
+];
+function showEnding(){
+  const e = ENDINGS[S.ending] || ENDINGS.grant;
+  const total = S.data + S.team + S.money;
+  const stars = total>=14 ? "★★★" : total>=10 ? "★★☆" : "★☆☆";
+  const got = Object.keys(S.seen).length;
+  let learned = LESSONS.filter(([f])=>S.flags[f]).map(([,t])=>t);
+  if(!learned.length) learned = ["まずは大学の窓口に相談するところから"];
+  $("top").hidden = true;
+  const c = paint(`<div><div class="scene"><div class="scene-bd" style="padding-bottom:6px">
+    <div class="end-hero">${ART.medal(e.c[0], e.c[1])}
+      <h2 class="end-title">${e.title}</h2><div class="end-sub">${stars}</div></div>
+    <p style="margin-top:12px">${e.text}</p>
+    <div class="memo"><b>${ICON.bulb}ひとくちメモ</b>${e.memo}</div>
+    <div class="learned"><h4>このプレイで通った道</h4><ul>${learned.map(t=>`<li>${t}</li>`).join("")}</ul></div>
+    <div class="learned" style="border-color:#ffe6b8; background:#fffaf0">
+      <h4 style="color:#d08900">ひらいた用語　${got} / ${WORD_ORDER.length}</h4>
+      <p style="margin:0; font-size:13.5px; color:#6a5530; font-weight:700">
+        ${got>=25?"かなり読めるようになりました。申請書も怖くないはずです。":got>=15?"だいぶ掴めてきました。用語集で残りも見てみてください。":"まだ開いていない言葉がたくさんあります。用語集をのぞいてみてください。"}</p>
+      <button class="btn ghost" id="openGl" type="button" style="margin-top:10px">用語集をひらく</button>
+    </div>
+    <div class="nextup">
+      <h4>ここから先、本格的にやってみたい人へ</h4>
+      <p>フルバージョンでは、実在の助成金制度を名指しで扱います。ギャップファンドからD-Global、AMEDの橋渡し拠点まで、どの枠にいつ出すか。四半期ごとに自分の時間を配り、VCと組み、審査のヒアリングに答え、28ターンで事業化まで持っていくシミュレーションです。</p>
+      <a href="https://claude.ai/artifact/RdTxPnhjJMJrAW5wXiX5b5" target="_blank" rel="noopener">フルバージョンへ進む →</a>
+    </div>
+    <button class="btn alt" id="again" type="button" style="margin-top:12px">別の発見で、もう一度</button>
+  </div></div></div>`);
+  c.querySelector("#openGl").addEventListener("click", openGlossary);
+  c.querySelector("#again").addEventListener("click", ()=>{
+    const seen = S.seen;
+    S = { data:1, team:0, money:2, i:0, flags:{}, disc:null, seen, ending:null };
+    pickDisc();
+  });
+}
+
+$("wordChip").addEventListener("click", openGlossary);
+title();
+</script>
+</body>
+</html>
